@@ -1,0 +1,37 @@
+name: "Telegram Notify Action"
+description: "Sends notifications to Telegram from GitHub Actions"
+author: "Ivan Ashikhmin"
+inputs:
+  token:
+    description: "Telegram Bot Token"
+    required: true
+  chat_id:
+    description: "Chat ID to send the notification"
+    required: true
+  thread_id:
+    description: "Thread ID (optional)"
+    required: false
+  status:
+    description: "Status of the workflow (e.g., success, failure)"
+    required: true
+  title:
+    description: "Title text"
+    required: false
+  message:
+    description: "Message text"
+    required: false
+  footer:
+    description: "Footer text"
+    required: false
+  notify_fields:
+    description: "Additional fields"
+    required: false
+outputs:
+  notify_result:
+    description: "Result of the notification"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+branding:
+  icon: "send"
+  color: "blue"
