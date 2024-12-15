@@ -1,4 +1,4 @@
-name: "Telegram Notify Action"
+name: "Rust Telegram Notify Action"
 description: "Sends notifications to Telegram from GitHub Actions"
 author: "Ivan Ashikhmin"
 inputs:
