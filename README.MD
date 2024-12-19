@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Telegram Notify Action
-        uses: proDreams/actions-telegram-notifier@main
+        uses: proDreams/actions-telegram-notifier@v1
         if: always()
         with:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -64,7 +64,7 @@ You can customize the notification by including additional inputs like `message`
 
 ```yaml
       - name: Run Telegram Notify Action
-        uses: proDreams/actions-telegram-notifier@main
+        uses: proDreams/actions-telegram-notifier@v1
         if: always()
         with:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
