@@ -29,7 +29,7 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/${{ github.repository_owner }}/actions-telegram-notifier:latest
+          tags: ghcr.io/prodreams/actions-telegram-notifier:latest
           provenance: false
 
   notify:
