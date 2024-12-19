@@ -1,4 +1,4 @@
-name: Test Telegram Notify Action
+name: Build Telegram Notify Action
 
 on:
   push:
@@ -6,11 +6,38 @@ on:
       - main
 
 jobs:
-  test:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ github.repository_owner }}/actions-telegram-notifier:latest
+          provenance: false
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Run Telegram Notify Action
@@ -20,5 +47,5 @@ jobs:
           chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
           status: ${{ job.status }}
           notify_fields: "actor,repository,workflow"
-          message: "custom message text"
-          footer: "footer text"
+          message: "Docker image successfully built and pushed to registry."
+          footer: "Workflow completed"
