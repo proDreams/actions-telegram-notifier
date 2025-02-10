@@ -171,6 +171,7 @@ fn escape_markdown_v2(text: &str) -> String {
         .replace('}', "\\}")
         .replace('.', "\\.")
         .replace('!', "\\!")
+        .replace('_', "\\_")
 }
 
 #[tokio::main]

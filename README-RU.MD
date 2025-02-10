@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Запуск действия уведомления в Telegram
-        uses: proDreams/actions-telegram-notifier@main
+        uses: proDreams/actions-telegram-notifier@v1
         if: always()
         with:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
 
 ```yaml
       - name: Запуск действия уведомления в Telegram
-        uses: proDreams/actions-telegram-notifier@main
+        uses: proDreams/actions-telegram-notifier@v1
         if: always()
         with:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
