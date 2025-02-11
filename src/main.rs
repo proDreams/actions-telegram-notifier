@@ -44,7 +44,7 @@ fn get_env_values() -> Result<(HashMap<String, String>, Vec<String>), String> {
             }
         }
     }
-    
+
     if env_values["INPUT_TOKEN"].is_empty() {
         return Err("Missing required token!".to_string());
     }
@@ -97,19 +97,24 @@ fn gen_notify_message(env_values: &HashMap<String, String>, notify_fields: Vec<S
 
     if !notify_fields.is_empty() {
         if notify_fields.contains(&"actor".to_string()) {
-            message += format!("🧑‍💻 *Actor:* {}\n", env_values["GITHUB_ACTOR"]).as_str();
+            message += format!("🧑‍💻 *Actor:* `{}`\n", env_values["GITHUB_ACTOR"]).as_str();
         }
         if notify_fields.contains(&"repository".to_string()) {
-            message += format!("📦 *Repository:* {}\n", env_values["GITHUB_REPOSITORY"]).as_str();
+            message += format!("📦 *Repository:* `{}`\n", env_values["GITHUB_REPOSITORY"]).as_str();
         }
         if notify_fields.contains(&"workflow".to_string()) {
-            message += format!("🚀 *Workflow:* {}\n", env_values["GITHUB_WORKFLOW"]).as_str();
+            message += format!("🚀 *Workflow:* `{}`\n", env_values["GITHUB_WORKFLOW"]).as_str();
         }
         if notify_fields.contains(&"branch".to_string()) {
-            message += format!("🚀 *Branch:* {}\n", env_values["GITHUB_REF_NAME"]).as_str();
+            message += format!("🚀 *Branch:* `{}`\n", env_values["GITHUB_REF_NAME"]).as_str();
         }
         if notify_fields.contains(&"commit".to_string()) {
-            message += format!("🚀 *Commit Message:* \n```{}```\n", env_values["COMMIT_MESSAGE"]).as_str();
+            let commit_message = env_values["COMMIT_MESSAGE"]
+                .splitn(2, '\n')
+                .next()
+                .unwrap_or("");
+
+            message += format!("🚀 *Commit Message:* `{}`\n", commit_message).as_str();
         }
     }
 
@@ -167,7 +172,7 @@ async fn send_notify_message(message_text: String, env_values: &HashMap<String, 
         let status = response.status();
         let error_text = response.text().await.expect("Failed to read response body");
         eprintln!("Error: {}\nResponse Body: {}", status, error_text);
-    } else { 
+    } else {
         println!("✨ Notify send successful!");
     }
 }
@@ -178,7 +183,7 @@ fn escape_markdown_v2(text: &str) -> String {
         .replace('(', "\\(")
         .replace(')', "\\)")
         .replace('~', "\\~")
-        .replace('`', "\\`")
+        // .replace('`', "\\`")
         .replace('>', "\\>")
         .replace('#', "\\#")
         .replace('+', "\\+")
