@@ -89,8 +89,8 @@ fn gen_notify_message(env_values: &HashMap<String, String>, notify_fields: Vec<S
         .as_str();
     } else {
         message += format!(
-            "{} {} *{}*\n",
-            env_values["INPUT_STATUS_ICON"], env_values["INPUT_TITLE"], env_values["INPUT_STATUS"]
+            "{} {}\n",
+            env_values["INPUT_STATUS_ICON"], env_values["INPUT_TITLE"]
         )
         .as_str();
     }
