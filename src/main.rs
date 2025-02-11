@@ -109,7 +109,7 @@ fn gen_notify_message(env_values: &HashMap<String, String>, notify_fields: Vec<S
             message += format!("🚀 *Branch:* {}\n", env_values["GITHUB_REF_NAME"]).as_str();
         }
         if notify_fields.contains(&"commit".to_string()) {
-            message += format!("🚀 *Commit Message:* {}\n", env_values["COMMIT_MESSAGE"]).as_str();
+            message += format!("🚀 *Commit Message:* \n```{}```\n", env_values["COMMIT_MESSAGE"]).as_str();
         }
     }
 
