@@ -16,7 +16,9 @@ fn get_env_values() -> Result<(HashMap<String, String>, Vec<String>), String> {
         "GITHUB_SERVER_URL",
         "GITHUB_WORKFLOW",
         "GITHUB_REPOSITORY",
+        "GITHUB_REF_NAME",
         "GITHUB_SHA",
+        "GITHUB_EVENT_PATH",
     ];
 
     let status_icons: HashMap<String, &str> = HashMap::from([
@@ -33,6 +35,16 @@ fn get_env_values() -> Result<(HashMap<String, String>, Vec<String>), String> {
         env_values.insert(key.to_string(), value);
     }
 
+    if let Ok(event_path) = env::var("GITHUB_EVENT_PATH") {
+        if let Ok(event_content) = std::fs::read_to_string(&event_path) {
+            if let Ok(event_json) = serde_json::from_str::<serde_json::Value>(&event_content) {
+                if let Some(commit_message) = event_json["head_commit"]["message"].as_str() {
+                    env_values.insert("COMMIT_MESSAGE".to_string(), commit_message.to_string());
+                }
+            }
+        }
+    }
+    
     if env_values["INPUT_TOKEN"].is_empty() {
         return Err("Missing required token!".to_string());
     }
@@ -92,6 +104,12 @@ fn gen_notify_message(env_values: &HashMap<String, String>, notify_fields: Vec<S
         }
         if notify_fields.contains(&"workflow".to_string()) {
             message += format!("🚀 *Workflow:* {}\n", env_values["GITHUB_WORKFLOW"]).as_str();
+        }
+        if notify_fields.contains(&"branch".to_string()) {
+            message += format!("🚀 *Branch:* {}\n", env_values["GITHUB_REF_NAME"]).as_str();
+        }
+        if notify_fields.contains(&"commit".to_string()) {
+            message += format!("🚀 *Commit Message:* {}\n", env_values["COMMIT_MESSAGE"]).as_str();
         }
     }
 
