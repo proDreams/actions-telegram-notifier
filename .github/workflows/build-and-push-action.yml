@@ -1,4 +1,4 @@
-name: Build Telegram Notify Action
+name: Build And Push Telegram Notify Action
 
 on:
   push:

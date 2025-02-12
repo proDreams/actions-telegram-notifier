@@ -1,4 +1,8 @@
-# Telegram Notify Action
+# Napkin Tools: Telegram Notify Action
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/proDreams/actions-telegram-notifier/build-and-push-action.yml)
+[![Код на салфетке](https://img.shields.io/badge/Telegram-Код_на_салфетке-blue)](https://t.me/press_any_button)
+[![Заметки на салфетке](https://img.shields.io/badge/Telegram-Заметки_на_салфетке-blue)](https://t.me/writeanynotes)
 
 A GitHub Action to send notifications to Telegram about the status of your GitHub Workflow runs. It helps you track
 processes and get real-time updates on successful or failed executions.
@@ -22,16 +26,27 @@ You need:
 
 ## Inputs
 
-| Name            | Required | Description                                                                                                                                                                                                                                       |
-| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `token`         | Yes      | Telegram Bot Token. Use GitHub Secrets to store this securely.                                                                                                                                                                                    |
-| `chat_id`       | Yes      | Chat ID where the message will be sent. Use GitHub Secrets to store this securely.                                                                                                                                                                |
-| `thread_id`     | No       | Thread ID for group messages. Optional.                                                                                                                                                                                                           |
-| `status`        | Yes      | Workflow status (e.g., `success`, `failure`, `cancelled`, `info`). Get from `${{ job.status }}`, or pass it yourself, for example `pending`.                                                                                                      |
-| `title`         | No       | Title text for the message. Defaults to a generic status message if not provided.                                                                                                                                                                 |
-| `message`       | No       | Custom message text to include in the notification.                                                                                                                                                                                               |
-| `footer`        | No       | Footer text to include at the end of the notification.                                                                                                                                                                                            |
-| `notify_fields` | No       | Comma-separated list of additional fields to include: `actor`, `repository`, `workflow`, `branch`, `commit`, `repo_with_tag`. These fields enhance the message's informativeness, making it easier for recipients to understand the notification. |
+| Name            | Required | Description                                                                                                                                  |
+|-----------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| `token`         | Yes      | Telegram Bot Token. Use GitHub Secrets to store this securely.                                                                               |
+| `chat_id`       | Yes      | Chat ID where the message will be sent. Use GitHub Secrets to store this securely.                                                           |
+| `thread_id`     | No       | Thread ID for group messages. Optional.                                                                                                      |
+| `status`        | Yes      | Workflow status (e.g., `success`, `failure`, `cancelled`, `info`). Get from `${{ job.status }}`, or pass it yourself, for example `pending`. |
+| `title`         | No       | Title text for the message. Defaults to a generic status message if not provided.                                                            |
+| `message`       | No       | Custom message text to include in the notification.                                                                                          |
+| `footer`        | No       | Footer text to include at the end of the notification.                                                                                       |
+| `notify_fields` | No       | Comma-separated list of additional fields to include: `actor`, `repository`, `workflow`, `branch`, `commit`, `repo_with_tag`.                |
+
+### Values of `notify_fields`
+
+| Field           | Description                                                                |
+|-----------------|----------------------------------------------------------------------------|
+| `actor`         | The username of the person who triggered the workflow.                     |
+| `repository`    | The name of the repository where the workflow is running.                  |
+| `workflow`      | The name of the workflow triggered in GitHub Actions.                      |
+| `branch`        | The branch in which the workflow was triggered.                            |
+| `commit`        | The first line of the commit message.                                      |
+| `repo_with_tag` | The repository name with the tag (if the workflow was triggered by a tag). |
 
 ## Usage
 
@@ -95,3 +110,9 @@ You can customize the notification by including additional inputs like `message`
 ## Author
 
 - Ivan "proDream" Ashikhmin
+
+## Contributors
+
+<a href="https://github.com/proDreams/actions-telegram-notifier/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=proDreams/actions-telegram-notifier" />
+</a>
