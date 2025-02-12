@@ -26,6 +26,7 @@ fn get_env_values() -> Result<(HashMap<String, String>, Vec<String>), String> {
         ("failure".to_string(), "🔴"),
         ("cancelled".to_string(), "❌"),
         ("info".to_string(), "🔔"),
+        ("pending".to_string(), "⌛"),
     ]);
 
     let mut env_values: HashMap<String, String> = HashMap::new();
@@ -103,10 +104,13 @@ fn gen_notify_message(env_values: &HashMap<String, String>, notify_fields: Vec<S
             message += format!("📦 *Repository:* `{}`\n", env_values["GITHUB_REPOSITORY"]).as_str();
         }
         if notify_fields.contains(&"workflow".to_string()) {
-            message += format!("🚀 *Workflow:* `{}`\n", env_values["GITHUB_WORKFLOW"]).as_str();
+            message += format!("🏹 *Workflow:* `{}`\n", env_values["GITHUB_WORKFLOW"]).as_str();
         }
         if notify_fields.contains(&"branch".to_string()) {
-            message += format!("🚀 *Branch:* `{}`\n", env_values["GITHUB_REF_NAME"]).as_str();
+            message += format!("🏷️ *Branch:* `{}`\n", env_values["GITHUB_REF_NAME"]).as_str();
+        }
+        if notify_fields.contains(&"repo_with_tag".to_string()) {
+            message += format!("🛠️ `@{}:{}`\n", env_values["GITHUB_REPOSITORY"], env_values["GITHUB_REF_NAME"]).as_str();
         }
         if notify_fields.contains(&"commit".to_string()) {
             let commit_message = env_values["COMMIT_MESSAGE"]
@@ -114,7 +118,7 @@ fn gen_notify_message(env_values: &HashMap<String, String>, notify_fields: Vec<S
                 .next()
                 .unwrap_or("");
 
-            message += format!("🚀 *Commit Message:* `{}`\n", commit_message).as_str();
+            message += format!("🔨 *Commit Message:* `{}`\n", commit_message).as_str();
         }
     }
 

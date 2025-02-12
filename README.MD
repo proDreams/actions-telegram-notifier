@@ -22,16 +22,16 @@ You need:
 
 ## Inputs
 
-| Name            | Required | Description                                                                                                                                                                                                                      |
-|-----------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `token`         | Yes      | Telegram Bot Token. Use GitHub Secrets to store this securely.                                                                                                                                                                   |
-| `chat_id`       | Yes      | Chat ID where the message will be sent. Use GitHub Secrets to store this securely.                                                                                                                                               |
-| `thread_id`     | No       | Thread ID for group messages. Optional.                                                                                                                                                                                          |
-| `status`        | Yes      | Workflow status (e.g., `success`, `failure`, `cancelled`, `info`).                                                                                                                                                               |
-| `title`         | No       | Title text for the message. Defaults to a generic status message if not provided.                                                                                                                                                |
-| `message`       | No       | Custom message text to include in the notification.                                                                                                                                                                              |
-| `footer`        | No       | Footer text to include at the end of the notification.                                                                                                                                                                           |
-| `notify_fields` | No       | Comma-separated list of additional fields to include: `actor`, `repository`, `workflow`, `branch`, `commit`. These fields enhance the message's informativeness, making it easier for recipients to understand the notification. |
+| Name            | Required | Description                                                                                                                                                                                                                                       |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `token`         | Yes      | Telegram Bot Token. Use GitHub Secrets to store this securely.                                                                                                                                                                                    |
+| `chat_id`       | Yes      | Chat ID where the message will be sent. Use GitHub Secrets to store this securely.                                                                                                                                                                |
+| `thread_id`     | No       | Thread ID for group messages. Optional.                                                                                                                                                                                                           |
+| `status`        | Yes      | Workflow status (e.g., `success`, `failure`, `cancelled`, `info`). Get from `${{ job.status }}`, or pass it yourself, for example `pending`.                                                                                                      |
+| `title`         | No       | Title text for the message. Defaults to a generic status message if not provided.                                                                                                                                                                 |
+| `message`       | No       | Custom message text to include in the notification.                                                                                                                                                                                               |
+| `footer`        | No       | Footer text to include at the end of the notification.                                                                                                                                                                                            |
+| `notify_fields` | No       | Comma-separated list of additional fields to include: `actor`, `repository`, `workflow`, `branch`, `commit`, `repo_with_tag`. These fields enhance the message's informativeness, making it easier for recipients to understand the notification. |
 
 ## Usage
 
@@ -63,16 +63,16 @@ jobs:
 You can customize the notification by including additional inputs like `message` and `footer`:
 
 ```yaml
-      - name: Run Telegram Notify Action
-        uses: proDreams/actions-telegram-notifier@main
-        if: always()
-        with:
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          status: ${{ job.status }}
-          notify_fields: "actor,repository,workflow"
-          message: "Custom message text"
-          footer: "Footer text"
+- name: Run Telegram Notify Action
+  uses: proDreams/actions-telegram-notifier@main
+  if: always()
+  with:
+    token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+    chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+    status: ${{ job.status }}
+    notify_fields: "actor,repository,workflow"
+    message: "Custom message text"
+    footer: "Footer text"
 ```
 
 ## Example Notifications
