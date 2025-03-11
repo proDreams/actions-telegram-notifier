@@ -55,7 +55,7 @@ pub fn generate_notify_fields(data: &DataStructure, event: &PushEvent) -> String
             }
             NotifyFields::Workflow => {
                 message.push_str(&format!(
-                    "\n🏹 <b>Workflow:</b> <code>{}</code",
+                    "\n🏹 <b>Workflow:</b> <code>{}</code>",
                     data.workflow
                 ));
             }
