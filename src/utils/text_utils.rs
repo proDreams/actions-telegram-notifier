@@ -22,7 +22,7 @@ pub fn escape_markdown_v2(text: &str) -> String {
 
 pub fn get_input_title(title: &str, status: &Status) -> String {
     if title.is_empty() {
-        format!("{} *Workflow status:* {}\n", status.icon(), status.text())
+        format!("{} <b>Workflow status:</b> <code>{}</code>\n", status.icon(), status.text())
     } else {
         format!("{} {}\n", status.icon(), title)
     }
