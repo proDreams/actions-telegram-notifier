@@ -26,6 +26,7 @@ fn generate_json(message_text: &String, data: &DataStructure) -> serde_json::val
         "message_thread_id": data.thread_id,
         "text": message_text,
         "parse_mode": "HTML",
+        "disable_web_page_preview": true,
         "reply_markup": {
             "inline_keyboard": [
                 [

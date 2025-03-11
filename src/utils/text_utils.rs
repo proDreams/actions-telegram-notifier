@@ -43,22 +43,25 @@ pub fn generate_notify_fields(data: &DataStructure, event: &PushEvent) -> String
         match field {
             NotifyFields::Actor => {
                 message.push_str(&format!(
-                    "\n🧑‍💻 *Actor:* <a href='{}'>{}</a>",
+                    "\n🧑‍💻 <b>Actor:</b> <a href='{}'>{}</a>",
                     event.sender.html_url, event.sender.login
                 ));
             }
             NotifyFields::Repository => {
                 message.push_str(&format!(
-                    "\n📦 *Repository:* <a href='{}'>{}</a>",
+                    "\n📦 <b>Repository:</b> <a href='{}'>{}</a>",
                     event.repository.html_url, event.repository.full_name
                 ));
             }
             NotifyFields::Workflow => {
-                message.push_str(&format!("\n🏹 *Workflow:* `{}`", data.workflow));
+                message.push_str(&format!(
+                    "\n🏹 <b>Workflow:<b> <code>{}</code",
+                    data.workflow
+                ));
             }
             NotifyFields::Branch => {
                 let branch = event.reference.replace("refs/heads/", "");
-                message.push_str(&format!("\n🏷️ *Branch:* `{}`", branch));
+                message.push_str(&format!("\n🏷️ <b>Branch:</b> <code>{}</code>", branch));
             }
             NotifyFields::RepoWithTag => {
                 let branch = event.reference.replace("refs/heads/", "");
@@ -68,7 +71,15 @@ pub fn generate_notify_fields(data: &DataStructure, event: &PushEvent) -> String
                 ));
             }
             NotifyFields::Commit => {
-                message.push_str(&format!("\n🔨 *Commit:* [View Changes]({})", event.compare));
+                message.push_str(&format!(
+                    "\n🔨 <b>Commit Message:</b> {}",
+                    event
+                        .head_commit
+                        .message
+                        .splitn(2, '\n')
+                        .next()
+                        .unwrap_or("")
+                ));
             }
         }
     }
