@@ -42,14 +42,14 @@ pub fn generate_notify_fields(data: &DataStructure, event: &PushEvent) -> String
         match field {
             NotifyFields::Actor => {
                 message.push_str(&format!(
-                    "\n🧑‍💻 *Actor:* [{}]({})",
-                    event.sender.login, event.sender.html_url
+                    "\n🧑‍💻 *Actor:* [{}\\]({})",
+                    escape_markdown_v2(&event.sender.login), event.sender.html_url
                 ));
             }
             NotifyFields::Repository => {
                 message.push_str(&format!(
-                    "\n📦 *Repository:* [{}]({})",
-                    event.repository.full_name, event.repository.html_url
+                    "\n📦 *Repository:* [{}\\]({})",
+                    escape_markdown_v2(&event.repository.full_name), event.repository.html_url
                 ));
             }
             NotifyFields::Workflow => {
