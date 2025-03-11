@@ -2,6 +2,7 @@ use crate::enums::workflow_enums::{NotifyFields, Status};
 use crate::structures::data_structure::DataStructure;
 use crate::structures::event_structures::PushEvent;
 
+#[allow(dead_code)]
 pub fn escape_markdown_v2(text: &str) -> String {
     const SPECIAL_CHARS: [char; 18] = [
         '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!',
@@ -23,13 +24,13 @@ pub fn get_input_title(title: &str, status: &Status) -> String {
     if title.is_empty() {
         format!("{} *Workflow status:* {}\n", status.icon(), status.text())
     } else {
-        format!("{} {}\n", status.icon(), escape_markdown_v2(title))
+        format!("{} {}\n", status.icon(), title)
     }
 }
 
 pub fn generate_input_message(message: &str) -> String {
     if !message.is_empty() {
-        format!("\n{}\n", escape_markdown_v2(message))
+        format!("\n{}\n", message)
     } else {
         "".to_string()
     }
@@ -42,14 +43,14 @@ pub fn generate_notify_fields(data: &DataStructure, event: &PushEvent) -> String
         match field {
             NotifyFields::Actor => {
                 message.push_str(&format!(
-                    "\n🧑‍💻 *Actor:* [{}\\]({})",
-                    escape_markdown_v2(&event.sender.login), event.sender.html_url
+                    "\n🧑‍💻 *Actor:* <a href='{}'>{}</a>",
+                    event.sender.html_url, event.sender.login
                 ));
             }
             NotifyFields::Repository => {
                 message.push_str(&format!(
-                    "\n📦 *Repository:* [{}\\]({})",
-                    escape_markdown_v2(&event.repository.full_name), event.repository.html_url
+                    "\n📦 *Repository:* <a href='{}'>{}</a>",
+                    event.repository.html_url, event.repository.full_name
                 ));
             }
             NotifyFields::Workflow => {

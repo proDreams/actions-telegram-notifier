@@ -25,7 +25,7 @@ fn generate_json(message_text: &String, data: &DataStructure) -> serde_json::val
         "chat_id": data.chat_id,
         "message_thread_id": data.thread_id,
         "text": message_text,
-        "parse_mode": "MarkdownV2",
+        "parse_mode": "HTML",
         "reply_markup": {
             "inline_keyboard": [
                 [

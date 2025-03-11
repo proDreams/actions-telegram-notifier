@@ -1,7 +1,7 @@
 use crate::structures::data_structure::DataStructure;
 use crate::structures::event_structures::PushEvent;
 use crate::utils::text_utils::{
-    escape_markdown_v2, generate_input_message, generate_notify_fields, get_input_title,
+    generate_input_message, generate_notify_fields, get_input_title,
 };
 
 pub fn generate_push_message(data: &DataStructure, event: &PushEvent) -> String {
