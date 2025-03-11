@@ -55,7 +55,7 @@ pub fn generate_notify_fields(data: &DataStructure, event: &PushEvent) -> String
             }
             NotifyFields::Workflow => {
                 message.push_str(&format!(
-                    "\n🏹 <b>Workflow:<b> <code>{}</code",
+                    "\n🏹 <b>Workflow:</b> <code>{}</code",
                     data.workflow
                 ));
             }
@@ -66,13 +66,13 @@ pub fn generate_notify_fields(data: &DataStructure, event: &PushEvent) -> String
             NotifyFields::RepoWithTag => {
                 let branch = event.reference.replace("refs/heads/", "");
                 message.push_str(&format!(
-                    "\n🛠️ `@{}:{}`",
+                    "\n🛠️ <code>@{}:{}</code>",
                     event.repository.full_name, branch
                 ));
             }
             NotifyFields::Commit => {
                 message.push_str(&format!(
-                    "\n🔨 <b>Commit Message:</b> {}",
+                    "\n🔨 <b>Commit Message:</b> <code>{}</code>",
                     event
                         .head_commit
                         .message
