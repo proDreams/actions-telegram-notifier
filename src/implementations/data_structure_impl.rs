@@ -1,5 +1,5 @@
 use crate::enums::event_enums::GitHubEvent;
-use crate::enums::workflow_enums::{NotifyFields, Status};
+use crate::enums::workflow_enums::{NotifyFields, PushStatus};
 use crate::structures::data_structure::DataStructure;
 use crate::utils::env_utils::get_env_var;
 use std::error::Error;
@@ -16,7 +16,7 @@ impl DataStructure {
         let footer = get_env_var("INPUT_FOOTER").ok();
 
         let status_input = get_env_var("INPUT_STATUS").ok();
-        let status = Status::from_str(status_input.as_deref().unwrap_or("info"));
+        let status = PushStatus::from_str(status_input.as_deref().unwrap_or("info"));
 
         let event_name = get_env_var("GITHUB_EVENT_NAME")?;
         let event_path = get_env_var("GITHUB_EVENT_PATH")?;
