@@ -8,7 +8,7 @@ fn generate_keyboard(github_event: &GitHubEvent) -> serde_json::Value {
         GitHubEvent::Push(event) => {
             json!({
                 "text": "↗️ Link to commit",
-                "url": event.compare.clone()
+                "url": event.get_compare()
             })
         }
         GitHubEvent::PullRequest(event) => {
