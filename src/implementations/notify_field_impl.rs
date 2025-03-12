@@ -1,4 +1,4 @@
-use crate::enums::workflow_enums::{NotifyFields, Status};
+use crate::enums::workflow_enums::{NotifyFields};
 
 impl NotifyFields {
     pub fn from_str(s: &str) -> Option<Self> {
