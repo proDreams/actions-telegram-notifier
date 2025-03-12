@@ -51,7 +51,7 @@ pub fn get_pull_request_title(data: &PullRequestData) -> String {
 
 pub fn generate_input_message(message: &str) -> String {
     if !message.is_empty() {
-        format!("\n{}\n", message)
+        format!("\n\n{}", message)
     } else {
         "".to_string()
     }
