@@ -88,7 +88,7 @@ pub fn generate_general_fields(
         }
     }
 
-    message.trim_start().to_string()
+    message.to_string()
 }
 
 pub fn generate_push_notify_fields(data: &DataStructure, event: &PushEvent) -> String {
@@ -122,5 +122,5 @@ pub fn generate_push_notify_fields(data: &DataStructure, event: &PushEvent) -> S
         }
     }
 
-    message.trim_start().to_string()
+    message.to_string()
 }
