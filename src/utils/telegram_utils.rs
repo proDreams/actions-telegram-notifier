@@ -13,8 +13,8 @@ fn generate_keyboard(github_event: &GitHubEvent) -> serde_json::Value {
         }
         GitHubEvent::PullRequest(event) => {
             json!({
-                "text": "↗️ Link to commit",
-                "url": "https://api.github.com" // temporary link
+                "text": "↗️ Link to PullRequest",
+                "url": event.pull_request.html_url
             })
         }
     }
