@@ -26,8 +26,9 @@ pub fn generate_pull_request_message(data: &DataStructure, event: &PullRequestEv
         data.title.as_deref().unwrap_or_default(),
         &event.action,
         &event.number,
+        &event.pull_request.merged,
     );
-    
+
     message += &*get_pull_request_title(&event.pull_request);
 
     message += &*generate_pull_request_notify_fields(data, &event);
