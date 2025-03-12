@@ -1,6 +1,6 @@
 use crate::enums::workflow_enums::{NotifyFields, PullRequestAction, PushStatus};
 use crate::structures::data_structure::DataStructure;
-use crate::structures::event_structures::{PullRequestEvent, PushEvent};
+use crate::structures::event_structures::PushEvent;
 use crate::structures::event_type_structures::pull_request_structures::PullRequestData;
 
 pub fn get_push_input_title(title: &str, status: &PushStatus) -> String {
@@ -29,8 +29,7 @@ pub fn get_pull_request_input_title(
                 number,
                 action.merged_text()
             )
-        }
-        else {
+        } else {
             format!(
                 "{} <b>Pull Request №{}:</b> <code>{}</code>\n",
                 action.icon(),
@@ -58,29 +57,45 @@ pub fn generate_input_message(message: &str) -> String {
     }
 }
 
-pub fn generate_push_notify_fields(data: &DataStructure, event: &PushEvent) -> String {
+pub fn generate_general_fields(
+    notify_fields: &Option<Vec<NotifyFields>>,
+    sender_html_url: &String,
+    login: &String,
+    repository_html_url: &String,
+    full_name: &String,
+    workflow: &String,
+) -> String {
     let mut message: String = String::new();
 
-    for field in data.notify_fields.as_ref().unwrap_or(&Vec::new()) {
+    for field in notify_fields.as_ref().unwrap_or(&Vec::new()) {
         match field {
             NotifyFields::Actor => {
                 message.push_str(&format!(
                     "\n🧑‍💻 <b>Actor:</b> <a href='{}'>{}</a>",
-                    event.sender.html_url, event.sender.login
+                    sender_html_url, login
                 ));
             }
             NotifyFields::Repository => {
                 message.push_str(&format!(
                     "\n📦 <b>Repository:</b> <a href='{}'>{}</a>",
-                    event.repository.html_url, event.repository.full_name
+                    repository_html_url, full_name
                 ));
             }
             NotifyFields::Workflow => {
-                message.push_str(&format!(
-                    "\n🏹 <b>Workflow:</b> <code>{}</code>",
-                    data.workflow
-                ));
+                message.push_str(&format!("\n🏹 <b>Workflow:</b> <code>{}</code>", workflow));
             }
+            _ => {}
+        }
+    }
+
+    message.trim_start().to_string()
+}
+
+pub fn generate_push_notify_fields(data: &DataStructure, event: &PushEvent) -> String {
+    let mut message: String = String::new();
+
+    for field in data.notify_fields.as_ref().unwrap_or(&Vec::new()) {
+        match field {
             NotifyFields::Branch => {
                 let branch = event.reference.replace("refs/heads/", "");
                 message.push_str(&format!("\n🏷️ <b>Branch:</b> <code>{}</code>", branch));
@@ -103,47 +118,7 @@ pub fn generate_push_notify_fields(data: &DataStructure, event: &PushEvent) -> S
                         .unwrap_or("")
                 ));
             }
-        }
-    }
-
-    message.trim_start().to_string()
-}
-
-pub fn generate_pull_request_notify_fields(
-    data: &DataStructure,
-    event: &PullRequestEvent,
-) -> String {
-    let mut message = String::new();
-
-    for field in data.notify_fields.as_ref().unwrap_or(&Vec::new()) {
-        match field {
-            NotifyFields::Actor => {
-                message.push_str(&format!(
-                    "\n🧑‍💻 <b>Actor:</b> <a href='{}'>{}</a>",
-                    event.sender.html_url, event.sender.login
-                ));
-            }
-            NotifyFields::Repository => {
-                message.push_str(&format!(
-                    "\n📦 <b>Repository:</b> <a href='{}'>{}</a>",
-                    event.repository.html_url, event.repository.full_name
-                ));
-            }
-            NotifyFields::Workflow => {
-                message.push_str(&format!(
-                    "\n🏹 <b>Workflow:</b> <code>{}</code>",
-                    data.workflow
-                ));
-            }
-            NotifyFields::Branch => {
-                eprintln!("Branch not applied to the pull request");
-            }
-            NotifyFields::RepoWithTag => {
-                eprintln!("Repository With Tag not applied to the pull request");
-            }
-            NotifyFields::Commit => {
-                eprintln!("Commit not applied to the pull request");
-            }
+            _ => {}
         }
     }
 
