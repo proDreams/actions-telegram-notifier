@@ -6,7 +6,8 @@ use crate::structures::event_type_structures::pull_request_structures::PullReque
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PushEvent {
-    pub compare: String,
+    pub compare: Option<String>,
+    pub compare_url: Option<String>,
     pub head_commit: HeadCommit,
     #[serde(rename = "ref")]
     pub reference: String,
