@@ -13,7 +13,7 @@ inputs:
     required: false
   status:
     description: "Status of the workflow (e.g., success, failure)"
-    required: true
+    required: false
   title:
     description: "Title text"
     required: false
