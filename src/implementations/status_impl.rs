@@ -1,35 +1,35 @@
-use crate::enums::workflow_enums::Status;
+use crate::enums::workflow_enums::PushStatus;
 
-impl Status {
+impl PushStatus {
     pub fn text(&self) -> &str {
         match self {
-            Status::Success => "success",
-            Status::Failure => "failure",
-            Status::Cancelled => "cancelled",
-            Status::Info => "info",
-            Status::Pending => "pending",
+            PushStatus::Success => "success",
+            PushStatus::Failure => "failure",
+            PushStatus::Cancelled => "cancelled",
+            PushStatus::Info => "info",
+            PushStatus::Pending => "pending",
         }
     }
 
     pub fn icon(&self) -> &str {
         match self {
-            Status::Success => "✅",
-            Status::Failure => "🔴",
-            Status::Cancelled => "❌",
-            Status::Info => "🔔",
-            Status::Pending => "⌛",
+            PushStatus::Success => "✅",
+            PushStatus::Failure => "🔴",
+            PushStatus::Cancelled => "❌",
+            PushStatus::Info => "🔔",
+            PushStatus::Pending => "⌛",
         }
     }
 
     pub fn from_str(s: &str) -> Self {
         match s.to_lowercase().as_str() {
-            "success" => Status::Success,
-            "failure" => Status::Failure,
-            "cancelled" => Status::Cancelled,
-            "pending" => Status::Pending,
+            "success" => PushStatus::Success,
+            "failure" => PushStatus::Failure,
+            "cancelled" => PushStatus::Cancelled,
+            "pending" => PushStatus::Pending,
             _ => {
                 eprintln!("Unknown status {}, set default status 'info'", s);
-                Status::Info
+                PushStatus::Info
             }
         }
     }
