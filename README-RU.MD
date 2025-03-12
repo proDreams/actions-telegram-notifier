@@ -1,67 +1,126 @@
-# Napkin Tools: Telegram Notify Action
+# Napkin Tools: Actions Telegram Notify
 
+![GitHub License](https://img.shields.io/github/license/proDreams/reback)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/proDreams/actions-telegram-notifier/build-and-push-action.yml)
 [![Код на салфетке](https://img.shields.io/badge/Telegram-Код_на_салфетке-blue)](https://t.me/press_any_button)
 [![Заметки на салфетке](https://img.shields.io/badge/Telegram-Заметки_на_салфетке-blue)](https://t.me/writeanynotes)
 
-GitHub Action для отправки уведомлений в Telegram о статусе выполнения вашего рабочего процесса на GitHub. Это поможет
-вам отслеживать процессы и получать обновления о успешных или неудачных выполнениях в реальном времени.
+Action для отправки уведомлений в Telegram о статусе выполнения Workflow на GitHub/Gitea/Github Actions совместимой
+CI/CD-системе.
+Actions Telegram Notify помогает отслеживать статус выполняемых Workflow.
 
 ## Особенности
 
 - Отправка обновлений о статусе в Telegram (например: успех, ошибка, отменено).
-- Настройка уведомлений с кастомизированным заголовком, сообщением и подписью (footer).
-- Включение дополнительных полей в оповещение, таких как автор коммита, репозиторий и имя рабочего процесса.
-- Автоматическое создание кнопки с ссылкой на коммит в уведомлении, что облегчает отслеживание изменений прямо из
-  Telegram.
+- Настройка уведомлений с кастомизированным заголовком (title), сообщением (message) и подписью (footer).
+- Включение дополнительных полей в оповещение, таких как автор коммита, репозиторий, название Workflow и др..
+- Обработка событий Push и Pull Request. (Нужно больше? Напишите в Issue или отправьте Pull Request!)
+- Автоматическое создание кнопки со ссылкой на Commit или Pull Request в уведомлении.
 
 ## Требования
 
-Необходимо:
+Для работы Actions Telegram Notify требуется:
 
-- Токен бота Telegram (его можно создать с помощью [BotFather](https://t.me/BotFather)).
-- Идентификатор чата для отправки сообщений.
+- Telegram Bot Token (его можно создать с помощью [BotFather](https://t.me/BotFather)).
+- Telegram Chat ID:
+    - Для личных сообщений от бота: 1234567.
+    - Для небольшой группы: -1234567
+    - Для большой группы/супергруппы: -1001234567
+    - Для личных сообщений необходимо начать диалог с ботом. Для групп необходимо добавить бота в группу и дать ему
+      минимальные права администратора, чтобы он смог отправлять сообщения.
+- (Необязательно) Telegram Chat Thread ID. Необходим для отправки сообщений в определённую тему в супергруппе.
 
-## Входные параметры
+## Аргументы запуска
 
-| Название        | Обязательный | Описание                                                                                                                                                |
-|-----------------|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `token`         | Да           | Токен бота Telegram. Используйте GitHub Secrets для безопасного хранения.                                                                               |
-| `chat_id`       | Да           | Идентификатор чата, куда будет отправлено сообщение. Используйте GitHub Secrets для безопасного хранения.                                               |
-| `thread_id`     | Нет          | Идентификатор темы для супергрупп. Необязательно.                                                                                                       |
-| `status`        | Да           | Статус рабочего процесса (например, `success`, `failure`, `cancelled`, `info`). Получаем из `${{ job.status }}`, либо передаем сами, например `pending` |
-| `title`         | Нет          | Текст заголовка для сообщения. По умолчанию используется общее сообщение о статусе, если не указано другое.                                             |
-| `message`       | Нет          | Пользовательский текст сообщения для включения в уведомление.                                                                                           |
-| `footer`        | Нет          | Текст для добавления в конец уведомления.                                                                                                               |
-| `notify_fields` | Нет          | Список дополнительных полей, разделенных запятыми, которые будут включены: `actor`, `repository`, `workflow`, `branch`, `commit`, `repo_with_tag`.      |
+| Название        | Обязательный | Описание                                                                                                                                  |
+|-----------------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `token`         | Да           | Telegram Bot Token. Используйте GitHub Secrets для безопасного хранения.                                                                  |
+| `chat_id`       | Да           | Telegram Chat ID. Используйте GitHub Secrets для безопасного хранения.                                                                    |
+| `thread_id`     | Нет          | Telegram Chat Thread ID.                                                                                                                  |
+| `status`        | Нет          | Статус рабочего процесса, получаем из `${{ job.status }}`, либо передаем сами, например `pending`. По умолчанию `info`, если не указан.   |
+| `title`         | Нет          | Текст заголовка для сообщения. По умолчанию используется общее сообщение.                                                                 |
+| `message`       | Нет          | Пользовательский текст сообщения для включения в уведомление.                                                                             |
+| `footer`        | Нет          | Текст для добавления в конец уведомления.                                                                                                 |
+| `notify_fields` | Нет          | Список дополнительных полей, разделенных запятыми, которые будут включены. Подробнее в [Значения `notify_fields`](значения-notify_fields) |
+
+### Значения `status`
+
+Статусы применимы для события `Push`.
+
+| Поле        | Описание                        |
+|-------------|---------------------------------|
+| `success`   | Успешное выполнение Workflow.   |
+| `failure`   | Неуспешное выполнение Workflow. |
+| `cancelled` | Workflow отменён.               |
+| `pending`   | Workflow ...                    |
+| `info`      | Информационный статус.          |
 
 ### Значения `notify_fields`
 
-| Поле            | Описание                                              |
-|-----------------|-------------------------------------------------------|
-| `actor`         | Имя пользователя, запустившего workflow.              |
-| `repository`    | Название репозитория, в котором выполняется workflow. |
-| `workflow`      | Название workflow, запущенного в GitHub Actions.      |
-| `branch`        | Ветка, в которой запущен workflow.                    |
-| `commit`        | Первая строка сообщения коммита                       |
-| `repo_with_tag` | Название репозитория с тегом.                         |
+| Поле            | Событие                | Описание                                                         |
+|-----------------|------------------------|------------------------------------------------------------------|
+| `actor`         | `Push`, `Pull Request` | Имя пользователя со ссылкой на профиль, запустившего Workflow.   |
+| `repository`    | `Push`, `Pull Request` | Название репозитория со ссылкой, в котором выполняется Workflow. |
+| `workflow`      | `Push`, `Pull Request` | Название выполняемого Workflow.                                  |
+| `branch`        | `Push`                 | Ветка, в которой запущен Workflow.                               |
+| `commit`        | `Push`                 | Первая строка сообщения коммита                                  |
+| `repo_with_tag` | `Push`                 | Название репозитория с тегом.                                    |
 
 ## Пример использования
 
-Вот пример того, как использовать этот action в вашем рабочем процессе на GitHub:
+### Событие `Push`
 
 ```yaml
 name: CI
+
 on:
   push:
-    branches:
-      - main
 
 jobs:
   notify:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Запуск действия уведомления в Telegram
+      - name: Run Actions Telegram Notify
+        uses: proDreams/actions-telegram-notifier@main
+        if: always()
+        with:
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          status: ${{ job.status }}
+          notify_fields: "actor,repository,workflow,branch,commit"
+          message: "Test message."
+          footer: "Test footer"
+```
+
+#### Разбор полей
+
+- `name` - Указываем название шага (необязательно).
+- `uses` - Указываем используемый Action. Рекомендуется использовать актуальный из `main-ветки`.
+- `if` - Указываем условия запуска:
+    - `always()` - Срабатывает всегда, при любом результате работы Workflow. (рекомендуется)
+    - `cancelled()` - Срабатывает только при отменённом Workflow.
+    - `failure()` - Срабатывает только при неуспешном выполнении Workflow.
+    - `success()` - Срабатывает только при успешном Workflow.
+- `with` - перечень входных параметров, необходимых для работы. Подробнее в [Аргументы запуска](#аргументы-запуска)
+
+### Событие `Pull Request`
+
+```yaml
+name: CI
+
+on:
+  pull_request:
+    types:
+      - closed
+      - opened
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Actions Telegram Notify
         uses: proDreams/actions-telegram-notifier@main
         if: always()
         with:
@@ -71,44 +130,43 @@ jobs:
           notify_fields: "actor,repository,workflow"
 ```
 
-### Расширенное использование
-
-Вы можете настроить уведомление, включив дополнительные параметры, такие как `message` и `footer`:
-
-```yaml
-- name: Запуск действия уведомления в Telegram
-  uses: proDreams/actions-telegram-notifier@main
-  if: always()
-  with:
-    token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-    chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-    status: ${{ job.status }}
-    notify_fields: "actor,repository,workflow"
-    message: "Текст сообщения"
-    footer: "Текст подписи"
-```
-
 ## Примеры уведомлений
 
-### Уведомление об успешном завершении
+### Уведомление об успешном завершении Wokflow в Push-событии
 
-![Success](./img/success.png)
+![Success](./img/push_success.png)
 
-## Обработка ошибок
+### Уведомлении об открытии Pull Request
 
-- Если запрос к API Telegram не удастся, действие зарегистрирует сообщение об ошибке, и рабочий процесс завершится с
-  ошибкой.
-- Частые проблемы включают неверный `token` или `chat_id`.
+![PR Opened](./img/pr_opened.png)
 
-## Детали разработки
+### Уведомлении о закрытии Pull Request
 
-- **Версия Rust:** Для работы действия используется Rust 1.83, указанный в Dockerfile.
-- **Совместимость с версиями GitHub Actions:** Совместимо с любыми современными версиями GitHub Actions.
-- **Dockerfile:** Действие контейнеризовано, что гарантирует его стабильную работу в любой среде.
+![PR Opened](./img/pr_closed.png)
+
+### Уведомлении о слиянии Pull Request
+
+![PR Opened](./img/pr_merged.png)
 
 ## Автор
 
-- Иван "proDream" Ашихмин
+Автор: Иван Ашихмин  
+Telegram для связи: [https://t.me/proDreams](https://t.me/proDreams)
+
+Action написан в рамках проекта "Код на салфетке".
+
+- Сайт: [https://pressanybutton.ru/](https://pressanybutton.ru/)
+- Telegram-канал: [https://t.me/press_any_button](https://t.me/press_any_button)
+
+## Поддержка
+
+Если вам нравится этот проект и вы хотите поддержать его дальнейшее развитие, рассмотрите возможность доната:
+
+- Донат через TON: `UQBU8rJEfUcBvJUbz6NbXiWxaOO_NoXHK_pXOWv7qsOBWbFp`
+- [Поддержка на Boosty](https://boosty.to/prodream)
+- [В нашем Telegram-боте за Telegram Stars](https://t.me/press_any_button_bot?start=donate)
+
+Ваша поддержка помогает проекту развиваться и улучшать будущие функции!
 
 ## Участники
 
@@ -116,3 +174,6 @@ jobs:
   <img src="https://contrib.rocks/image?repo=proDreams/actions-telegram-notifier" />
 </a>
 
+## Лицензия
+
+Этот проект распространяется под лицензией MIT. Подробности можно найти в файле [LICENSE](LICENSE).
