@@ -20,4 +20,14 @@ impl PullRequestAction {
             PullRequestAction::Closed => "❌",
         }
     }
+
+    pub fn merged_icon(&self) -> &str {
+        "🔀"
+    }
+    
+    pub fn merged_text(&self) -> &str {
+        "merged"
+    }
+    
+    
 }

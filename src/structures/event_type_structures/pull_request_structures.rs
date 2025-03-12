@@ -4,4 +4,5 @@ use serde::{Deserialize, Serialize};
 pub struct  PullRequestData {
     pub html_url: String,
     pub title: String,
+    pub merged: bool,
 }
