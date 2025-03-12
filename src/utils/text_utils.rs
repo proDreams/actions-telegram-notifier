@@ -34,7 +34,7 @@ pub fn get_pull_request_input_title(
 
 pub fn get_pull_request_title(data: &PullRequestData) -> String {
     format!(
-        "<b>PR Title:</b> <a href='{}'>{}</a>\n",
+        "🔀 <b>PR Title:</b> <a href='{}'>{}</a>\n",
         data.html_url, data.title
     )
 }
