@@ -2,7 +2,7 @@ use crate::enums::workflow_enums::EventStatus;
 
 pub fn get_workflow_dispatch_input_title(title: &str) -> String {
     if title.is_empty() {
-        "🚀 Workflow Dispatched\n".to_string()
+        "🚀 <b>Workflow Dispatched</b>\n".to_string()
     } else {
         format!("🚀 {}\n", title)
     }
@@ -27,7 +27,7 @@ pub fn generate_workflow_dispatch_inputs_message(inputs: &Vec<String>) -> String
     };
 
     format!(
-        "🔧 <b>With custom inputs:</b>\n<blockquote>{}</blockquote>\n",
+        "\n\n🔧 <b>With custom inputs:</b>\n<blockquote>{}</blockquote>\n",
         inputs_str
     )
 }

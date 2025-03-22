@@ -10,7 +10,7 @@ pub fn get_push_input_title(title: &str, status: &EventStatus) -> String {
             status.text()
         )
     } else {
-        format!("{} {}\n", status.icon(), title)
+        format!("{} <b>{}</b>\n", status.icon(), title)
     }
 }
 
