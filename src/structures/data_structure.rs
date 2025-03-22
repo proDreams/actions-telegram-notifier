@@ -1,5 +1,5 @@
 use crate::enums::event_enums::GitHubEvent;
-use crate::enums::workflow_enums::{NotifyFields, PushStatus};
+use crate::enums::workflow_enums::{NotifyFields, EventStatus};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -8,7 +8,7 @@ pub struct DataStructure {
     pub token: String,
     pub chat_id: String,
     pub thread_id: Option<String>,
-    pub status: PushStatus,
+    pub status: EventStatus,
     pub title: Option<String>,
     pub message: Option<String>,
     pub footer: Option<String>,

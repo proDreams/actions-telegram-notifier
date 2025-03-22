@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
-pub enum PushStatus {
+pub enum EventStatus {
     Success,
     Failure,
     Cancelled,
