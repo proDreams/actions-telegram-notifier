@@ -17,6 +17,12 @@ fn generate_keyboard(github_event: &GitHubEvent) -> serde_json::Value {
                 "url": event.pull_request.html_url
             })
         }
+        GitHubEvent::WorkflowDispatch(event) => {
+            json!({
+                "text": "↗️ Link to Workflow",
+                "url": format!("{}/blob/{}/{}", event.repository.html_url, event.reference.replace("refs/heads/", ""), event.workflow)
+            })
+        }
     }
 }
 
