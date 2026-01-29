@@ -1,4 +1,4 @@
-use crate::serializers::workflow_dispatch_input_keys::deserialize_input_keys;
+use crate::serializers::workflow_dispatch_input_keys::deserialize_input_pairs;
 use crate::enums::workflow_enums::PullRequestAction;
 use crate::structures::event_type_structures::base_structures::{Repository, Sender};
 use crate::structures::event_type_structures::pull_request_structures::PullRequestData;
@@ -27,8 +27,8 @@ pub struct PullRequestEvent {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct WorkflowDispatchEvent {
-    #[serde(default, deserialize_with = "deserialize_input_keys")]
-    pub inputs: Vec<String>,
+    #[serde(default, deserialize_with = "deserialize_input_pairs")]
+    pub inputs: Vec<(String, String)>,
     #[serde(rename = "ref")]
     pub reference: String,
     pub repository: Repository,

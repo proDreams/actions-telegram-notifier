@@ -34,7 +34,7 @@ outputs:
     description: "Result of the notification"
 runs:
   using: "docker"
-  image: "docker://ghcr.io/prodreams/actions-telegram-notifier:latest"
+  image: "docker://alexanderntk/telegram-notify@sha256:58e153ff59afc73ab833aebfb59399128ba0b61ab886f23f541fd58ffa2580d9"
 branding:
   icon: "send"
   color: "blue"
