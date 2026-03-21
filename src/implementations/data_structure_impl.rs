@@ -16,6 +16,8 @@ impl DataStructure {
         let message = get_env_var("INPUT_MESSAGE").ok();
         let footer = get_env_var("INPUT_FOOTER").ok();
 
+        let proxy_url = get_env_var("INPUT_PROXY_URL").ok();
+
         let status_input = get_env_var("INPUT_STATUS").ok();
         let status = EventStatus::from_str(status_input.as_deref().unwrap_or("info"));
 
@@ -48,6 +50,7 @@ impl DataStructure {
             footer,
             notify_fields,
             workflow,
+            proxy_url
         })
     }
 }
