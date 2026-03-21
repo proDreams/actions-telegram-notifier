@@ -26,6 +26,9 @@ inputs:
   footer:
     description: "Footer text"
     required: false
+  proxy_url:
+    description: 'Proxy server URL for routing requests (e.g., http://user:pass@127.0.0.1:8080 or socks5://ip:port).'
+    required: false
   notify_fields:
     description: "Additional fields"
     required: false
