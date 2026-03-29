@@ -1,3 +1,10 @@
+## v. 2.3.0
+- Proxy Server Support:
+  - Added a new optional input `proxy_url`.
+  - Supports routing requests through HTTP, HTTPS, and SOCKS5 proxies.
+- Updated `action.yml` to include the new input.
+- Updated `README.md`.
+
 ## v. 2.2 fix
 - Fix `api_url` default value if not provided.
 

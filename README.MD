@@ -70,6 +70,7 @@ To use Actions Telegram Notify, you need:
 | `message`       | No       | Custom message text to include in the notification.                                                                                    |  
 | `footer`        | No       | Text to append at the end of the notification.                                                                                         |  
 | `notify_fields` | No       | Comma-separated list of additional fields to include. See [`notify_fields` Values](#notify_fields-values) for details.                 |
+| `proxy_url`     | No       | Proxy server URL for routing requests (e.g., http://user:pass@127.0.0.1:8080 or socks5://ip:port).                                     |
 
 ### `status` Values
 
