@@ -37,6 +37,7 @@ impl DataStructure {
             });
 
         let workflow = get_env_var("GITHUB_WORKFLOW")?;
+        let sha = get_env_var("GITHUB_SHA").ok();
 
         Ok(DataStructure {
             event,
@@ -50,7 +51,8 @@ impl DataStructure {
             footer,
             notify_fields,
             workflow,
-            proxy_url
+            proxy_url,
+            sha
         })
     }
 }

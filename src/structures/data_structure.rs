@@ -15,5 +15,6 @@ pub struct DataStructure {
     pub footer: Option<String>,
     pub notify_fields: Option<Vec<NotifyFields>>,
     pub workflow: String,
-    pub proxy_url: Option<String>
+    pub proxy_url: Option<String>,
+    pub sha: Option<String>,
 }

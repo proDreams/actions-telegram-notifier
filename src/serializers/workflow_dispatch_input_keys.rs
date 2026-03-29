@@ -6,7 +6,6 @@ fn value_to_pretty_string(value: &Value) -> String {
     match value {
         Value::Null => "".to_string(),
         Value::String(s) => s.clone(),
-        // Numbers / bools / arrays / objects: keep JSON representation
         other => other.to_string(),
     }
 }
@@ -22,7 +21,6 @@ where
                 .into_iter()
                 .map(|(k, v)| (k, value_to_pretty_string(&v)))
                 .collect::<Vec<_>>();
-            // Deterministic ordering for stable messages/tests
             pairs.sort_by(|a, b| a.0.cmp(&b.0));
             pairs
         })

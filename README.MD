@@ -23,6 +23,7 @@ Actions Telegram Notify helps track the status of running Workflows.
     - [`Push` Event](#push-event)
         - [Field Breakdown](#field-breakdown)
     - [`Pull Request` Event](#pull-request-event)
+    - [`Pull Request Review` Event](#pull-request-review-event)
     - [`Workflow Dispatch` Event](#workflow-dispatch-event)
 - [Notification Examples](#notification-examples)
     - [Notification for Successful Workflow Completion in a Push Event](#notification-for-successful-workflow-completion-in-a-push-event)
@@ -40,7 +41,8 @@ Actions Telegram Notify helps track the status of running Workflows.
 - Sends status updates to Telegram (e.g., success, failure, canceled).
 - Customizable notifications with a title, message, and footer.
 - Includes additional fields such as commit author, repository, workflow name, and more.
-- Supports `Push`, `Pull Request` and `Workflow Dispatch` events. (Need more? Open an Issue or submit a Pull Request!)
+- Supports `Push`, `Pull Request`, `Pull Request Review`, and `Workflow Dispatch` events. (Need more? Open an Issue or
+  submit a Pull Request!)
 - Automatically generates a button with a link to the Commit or Pull Request in the notification.
 
 ## Requirements
@@ -86,14 +88,14 @@ Statuses apply to the `Push` event.
 
 ### `notify_fields` Values
 
-| Field           | Event                                       | Description                                                |  
-|-----------------|---------------------------------------------|------------------------------------------------------------|  
-| `actor`         | `Push`, `Pull Request`, `Workflow Dispatch` | Username with a profile link who triggered the Workflow.   |  
-| `repository`    | `Push`, `Pull Request`, `Workflow Dispatch` | Repository name with a link where the Workflow is running. |  
-| `workflow`      | `Push`, `Pull Request`, `Workflow Dispatch` | Name of the running Workflow.                              |  
-| `branch`        | `Push`                                      | Branch where the Workflow was triggered.                   |  
-| `commit`        | `Push`                                      | First line of the commit message.                          |  
-| `repo_with_tag` | `Push`                                      | Repository name with a tag.                                |  
+| Field           | Event                                                              | Description                                                |  
+|-----------------|--------------------------------------------------------------------|------------------------------------------------------------|  
+| `actor`         | `Push`, `Pull Request`, `Pull Request Review`, `Workflow Dispatch` | Username with a profile link who triggered the Workflow.   |  
+| `repository`    | `Push`, `Pull Request`, `Pull Request Review`, `Workflow Dispatch` | Repository name with a link where the Workflow is running. |  
+| `workflow`      | `Push`, `Pull Request`, `Pull Request Review`, `Workflow Dispatch` | Name of the running Workflow.                              |
+| `branch`        | `Push`                                                             | Branch where the Workflow was triggered.                   |  
+| `commit`        | `Push`                                                             | First line of the commit message.                          |  
+| `repo_with_tag` | `Push`                                                             | Repository name with a tag.                                |  
 
 ## Usage Example
 
@@ -159,6 +161,31 @@ jobs:
           status: ${{ job.status }}
           notify_fields: "actor,repository,workflow"
 ```
+
+### `Pull Request Review` Event
+
+```yaml
+name: CI
+
+on:
+  pull_request_review:
+    types:
+      - submitted
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Actions Telegram Notify
+        uses: proDreams/actions-telegram-notifier@main
+        if: always()
+        with:
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+          status: ${{ job.status }}
+          notify_fields: "actor,repository,workflow"
+ ```
 
 ### `Workflow Dispatch` Event
 

@@ -1,5 +1,6 @@
 use crate::structures::data_structure::DataStructure;
-use crate::structures::event_structures::{PullRequestEvent, PushEvent, WorkflowDispatchEvent};
+use crate::structures::event_structures::{PullRequestEvent, PullRequestReviewEvent, PushEvent, WorkflowDispatchEvent};
+use crate::utils::event_text_utils::pull_request_review_text_utils::{get_pull_request_review_input_title, get_review_details};
 use crate::utils::event_text_utils::pull_request_text_utils::{
     get_pull_request_input_title, get_pull_request_title,
 };
@@ -86,6 +87,37 @@ pub fn generate_workflow_dispatch_message(
 
     message += &*generate_workflow_dispatch_inputs_message(&event.inputs);
     
+    message += &*generate_input_message(data.message.as_deref().unwrap_or_default());
+
+    message += &*generate_input_message(data.footer.as_deref().unwrap_or_default());
+
+    message
+}
+
+pub fn generate_pull_request_review_message(
+    data: &DataStructure,
+    event: &PullRequestReviewEvent,
+) -> String {
+    let mut message = "".to_owned();
+
+    message += &*get_pull_request_review_input_title(
+        data.title.as_deref().unwrap_or_default(),
+        &event.review.state,
+    );
+
+    message += &*get_pull_request_title(&event.pull_request);
+
+    message += &*get_review_details(&event.review);
+
+    message += &*generate_general_fields(
+        &data.notify_fields,
+        &event.sender.html_url,
+        &event.sender.login,
+        &event.repository.html_url,
+        &event.repository.full_name,
+        &data.workflow,
+    );
+
     message += &*generate_input_message(data.message.as_deref().unwrap_or_default());
 
     message += &*generate_input_message(data.footer.as_deref().unwrap_or_default());

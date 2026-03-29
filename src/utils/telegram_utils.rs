@@ -22,6 +22,12 @@ fn generate_keyboard(github_event: &GitHubEvent) -> serde_json::Value {
                 "url": format!("{}/blob/{}/{}", event.repository.html_url, event.reference.replace("refs/heads/", ""), event.workflow)
             })
         }
+        GitHubEvent::PullRequestReview(event) => {
+            json!({
+                "text": "↗️ Link to Review",
+                "url": event.review.html_url
+            })
+        }
     }
 }
 
