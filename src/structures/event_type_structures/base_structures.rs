@@ -18,5 +18,6 @@ pub struct Review {
     pub body: Option<String>,
     #[serde(default)]
     pub state: String,
+    #[serde(default)]
     pub html_url: String,
 }
