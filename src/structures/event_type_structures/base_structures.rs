@@ -15,7 +15,6 @@ pub struct Sender {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Review {
     pub id: Option<u64>,
-    pub user: Sender,
     pub body: Option<String>,
     pub state: String,
     pub html_url: String,

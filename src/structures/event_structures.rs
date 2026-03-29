@@ -26,6 +26,15 @@ pub struct PullRequestEvent {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct PullRequestReviewEvent {
+    pub action: String,
+    pub review: Review,
+    pub pull_request: PullRequestData,
+    pub repository: Repository,
+    pub sender: Sender,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct WorkflowDispatchEvent {
     #[serde(default, deserialize_with = "deserialize_input_pairs")]
     pub inputs: Vec<(String, String)>,
@@ -34,13 +43,4 @@ pub struct WorkflowDispatchEvent {
     pub repository: Repository,
     pub sender: Sender,
     pub workflow: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct PullRequestReviewEvent {
-    pub action: String,
-    pub review: Review,
-    pub pull_request: PullRequestData,
-    pub repository: Repository,
-    pub sender: Sender,
 }
