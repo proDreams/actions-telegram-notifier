@@ -16,6 +16,7 @@ pub struct Sender {
 pub struct Review {
     pub id: Option<u64>,
     pub body: Option<String>,
+    #[serde(default)]
     pub state: String,
     pub html_url: String,
 }

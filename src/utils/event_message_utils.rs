@@ -100,14 +100,26 @@ pub fn generate_pull_request_review_message(
 ) -> String {
     let mut message = "".to_owned();
 
+    let review_state = if event.review.state.is_empty() {
+        &event.action
+    } else {
+        &event.review.state
+    };
+
     message += &*get_pull_request_review_input_title(
         data.title.as_deref().unwrap_or_default(),
-        &event.review.state,
+        review_state,
     );
 
     message += &*get_pull_request_title(&event.pull_request);
 
-    message += &*get_review_details(&event.review);
+    let review_url = if event.review.html_url.is_empty() {
+        &event.pull_request.html_url
+    } else {
+        &event.review.html_url
+    };
+    
+    message += &*get_review_details(&event.review, review_url);
 
     message += &*generate_general_fields(
         &data.notify_fields,

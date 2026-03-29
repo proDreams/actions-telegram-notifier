@@ -16,8 +16,11 @@ pub fn get_pull_request_review_input_title(title: &str, state: &str) -> String {
     }
 }
 
-pub fn get_review_details(review: &Review) -> String {
-    let mut details = format!("🔗 <b>Review Link:</b> <a href='{}'>Click here</a>\n", review.html_url);
+pub fn get_review_details(review: &Review, review_url: &String) -> String {
+    let mut details = format!(
+        "🔗 <b>Review Link:</b> <a href='{}'>Click here</a>\n",
+        review_url
+    );
 
     if let Some(body) = &review.body {
         if !body.trim().is_empty() {
@@ -26,7 +29,10 @@ pub fn get_review_details(review: &Review) -> String {
             } else {
                 body.to_string()
             };
-            details.push_str(&format!("📝 <b>Comment:</b>\n<blockquote>{}</blockquote>\n", truncated_body));
+            details.push_str(&format!(
+                "📝 <b>Comment:</b>\n<blockquote>{}</blockquote>\n",
+                truncated_body
+            ));
         }
     }
 

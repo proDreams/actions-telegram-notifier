@@ -23,9 +23,15 @@ fn generate_keyboard(github_event: &GitHubEvent) -> serde_json::Value {
             })
         }
         GitHubEvent::PullRequestReview(event) => {
+            let url = if event.review.html_url.is_empty() {
+                &event.pull_request.html_url
+            } else {
+                &event.review.html_url
+            };
+
             json!({
                 "text": "↗️ Link to Review",
-                "url": event.review.html_url
+                "url": url
             })
         }
     }
