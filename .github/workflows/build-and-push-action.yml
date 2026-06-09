@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  GHCR_IMAGE: ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ github.event.repository.name }}  
+  GHCR_IMAGE: ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ github.event.repository.name }}
 
 jobs:
   build:
