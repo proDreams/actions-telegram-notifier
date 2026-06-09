@@ -2,13 +2,12 @@
 
 ![GitHub License](https://img.shields.io/github/license/proDreams/reback)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/proDreams/actions-telegram-notifier/build-and-push-action.yml)
-[![Код на салфетке](https://img.shields.io/badge/Telegram-Код_на_салфетке-blue)](https://t.me/press_any_button)
-[![Заметки на салфетке](https://img.shields.io/badge/Telegram-Заметки_на_салфетке-blue)](https://t.me/writeanynotes)
+[![Napkin Code](https://img.shields.io/badge/Telegram-Код_на_салфетке-blue)](https://t.me/napkincode)
+[![Napkin Drafts](https://img.shields.io/badge/Telegram-Заметки_на_салфетке-blue)](https://t.me/writeanynotes)
 
-An action for sending notifications to Telegram about the status of a Workflow execution in a GitHub/Gitea/GitHub
-Actions-compatible CI/CD system.
+An action for sending notifications to Telegram about the status of a Workflow execution in **GitHub Actions**, **GitLab CI/CD**, or any GitHub Actions-compatible CI/CD system (e.g. Gitea Actions).
 
-Actions Telegram Notify helps track the status of running Workflows.
+The action automatically detects your CI provider and adapts its event parsing — no configuration changes needed.
 
 ## [Русская версия](./README-RU.MD)
 
@@ -17,20 +16,25 @@ Actions Telegram Notify helps track the status of running Workflows.
 - [Features](#features)
 - [Requirements](#requirements)
 - [Execution Arguments](#execution-arguments)
-    - [`status` Values](#status-values)
-    - [`notify_fields` Values](#notify_fields-values)
-- [Usage Example](#usage-example)
-    - [`Push` Event](#push-event)
-        - [Field Breakdown](#field-breakdown)
-    - [`Pull Request` Event](#pull-request-event)
-    - [`Pull Request Review` Event](#pull-request-review-event)
-    - [`Workflow Dispatch` Event](#workflow-dispatch-event)
+  - [`status` Values](#status-values)
+  - [`notify_fields` Values](#notify_fields-values)
+- [GitHub Actions Usage](#github-actions-usage)
+  - [`Push` Event](#push-event)
+    - [Field Breakdown](#field-breakdown)
+  - [`Pull Request` Event](#pull-request-event)
+  - [`Pull Request Review` Event](#pull-request-review-event)
+  - [`Workflow Dispatch` Event](#workflow-dispatch-event)
+- [GitLab CI/CD Usage](#gitlab-cicd-usage)
+  - [GitLab Push Event](#gitlab-push-event)
+  - [GitLab Merge Request Event](#gitlab-merge-request-event)
+  - [GitLab Tag Push](#gitlab-tag-push)
+  - [Manual / Web / Schedule Trigger](#manual--web--schedule-trigger)
 - [Notification Examples](#notification-examples)
-    - [Notification for Successful Workflow Completion in a Push Event](#notification-for-successful-workflow-completion-in-a-push-event)
-    - [Notification for Opening a Pull Request](#notification-for-opening-a-pull-request)
-    - [Notification for Closing a Pull Request](#notification-for-closing-a-pull-request)
-    - [Notification for Merging a Pull Request](#notification-for-merging-a-pull-request)
-    - [Notification for Workflow Dispatched](#notification-for-workflow-dispatched)
+  - [Notification for Successful Workflow Completion in a Push Event](#notification-for-successful-workflow-completion-in-a-push-event)
+  - [Notification for Opening a Pull Request](#notification-for-opening-a-pull-request)
+  - [Notification for Closing a Pull Request](#notification-for-closing-a-pull-request)
+  - [Notification for Merging a Pull Request](#notification-for-merging-a-pull-request)
+  - [Notification for Workflow Dispatched](#notification-for-workflow-dispatched)
 - [Author](#author)
 - [Support](#support)
 - [Contributors](#contributors)
@@ -41,9 +45,11 @@ Actions Telegram Notify helps track the status of running Workflows.
 - Sends status updates to Telegram (e.g., success, failure, canceled).
 - Customizable notifications with a title, message, and footer.
 - Includes additional fields such as commit author, repository, workflow name, and more.
-- Supports `Push`, `Pull Request`, `Pull Request Review`, and `Workflow Dispatch` events. (Need more? Open an Issue or
-  submit a Pull Request!)
-- Automatically generates a button with a link to the Commit or Pull Request in the notification.
+- Supports `Push`, `Pull Request`, `Pull Request Review`, and `Workflow Dispatch` events on **GitHub Actions**.
+- Supports `push`, `tag push`, `merge_request`, `manual/web/schedule/trigger` events on **GitLab CI/CD**.
+- Automatically generates a button with a link to the Commit, Pull Request, or Repository in the notification.
+- **Provider auto-detection** — the same Docker image works on GitHub and GitLab without configuration changes.
+- **Backward compatible** — all existing GitHub Actions workflows continue to work exactly as before.
 
 ## Requirements
 
@@ -51,28 +57,28 @@ To use Actions Telegram Notify, you need:
 
 - **Telegram Bot Token** (can be created via [BotFather](https://t.me/BotFather)).
 - **Telegram Chat ID**:
-    - For direct messages from the bot: `1234567`.
-    - For a small group: `-1234567`.
-    - For a large group/supergroup: `-1001234567`.
-    - **Important:**
-        - For direct messages, you need to start a chat with the bot.
-        - For groups, add the bot and grant it minimal admin rights to send messages.
+  - For direct messages from the bot: `1234567`.
+  - For a small group: `-1234567`.
+  - For a large group/supergroup: `-1001234567`.
+  - **Important:**
+    - For direct messages, you need to start a chat with the bot.
+    - For groups, add the bot and grant it minimal admin rights to send messages.
 - **(Optional) Telegram Chat Thread ID** – required for sending messages to a specific topic in a supergroup.
 
 ## Execution Arguments
 
 | Name            | Required | Description                                                                                                                            |  
 |-----------------|----------|----------------------------------------------------------------------------------------------------------------------------------------|  
-| `token`         | Yes      | Telegram Bot Token. Use GitHub Secrets for secure storage.                                                                             |  
-| `chat_id`       | Yes      | Telegram Chat ID. Use GitHub Secrets for secure storage.                                                                               |  
-| `api_url`       | No       | Custom Telegram [Bot API URL](https://core.telegram.org/bots/api#using-a-local-bot-api-server). Use GitHub Secrets for secure storage. |
+| `token`         | Yes      | Telegram Bot Token. Use GitHub Secrets / GitLab CI Variables for secure storage.                                                       |  
+| `chat_id`       | Yes      | Telegram Chat ID. Use GitHub Secrets / GitLab CI Variables for secure storage.                                                         |  
+| `api_url`       | No       | Custom Telegram [Bot API URL](https://core.telegram.org/bots/api#using-a-local-bot-api-server). Use secrets for secure storage.        |
 | `thread_id`     | No       | Telegram Chat Thread ID.                                                                                                               |  
 | `status`        | No       | Workflow status, retrieved from `${{ job.status }}` or set manually (e.g., `pending`). Defaults to `info` if not specified.            |  
 | `title`         | No       | Custom title text for the notification. Defaults to a general message.                                                                 |  
 | `message`       | No       | Custom message text to include in the notification.                                                                                    |  
 | `footer`        | No       | Text to append at the end of the notification.                                                                                         |  
 | `notify_fields` | No       | Comma-separated list of additional fields to include. See [`notify_fields` Values](#notify_fields-values) for details.                 |
-| `proxy_url`     | No       | Proxy server URL for routing requests (e.g., http://user:pass@127.0.0.1:8080 or socks5://ip:port).                                     |
+| `proxy_url`     | No       | Proxy server URL for routing requests (e.g., http://user:***@127.0.0.1:8080 or socks5://ip:port).                                     |
 
 ### `status` Values
 
@@ -95,9 +101,9 @@ Statuses apply to the `Push` event.
 | `workflow`      | `Push`, `Pull Request`, `Pull Request Review`, `Workflow Dispatch` | Name of the running Workflow.                              |
 | `branch`        | `Push`                                                             | Branch where the Workflow was triggered.                   |  
 | `commit`        | `Push`                                                             | First line of the commit message.                          |  
-| `repo_with_tag` | `Push`                                                             | Repository name with a tag.                                |  
+| `repo_with_tag` | `Push`                                                             | Repository name with a tag.                                |
 
-## Usage Example
+## GitHub Actions Usage
 
 ### `Push` Event
 
@@ -129,10 +135,10 @@ jobs:
 - **`name`** - Specifies the step name (optional).
 - **`uses`** - Specifies the Action to use. It is recommended to use the latest version from the `main` branch.
 - **`if`** - Defines the execution condition:
-    - `always()` - Always runs, regardless of Workflow status (recommended).
-    - `cancelled()` - Runs only if the Workflow was canceled.
-    - `failure()` - Runs only if the Workflow failed.
-    - `success()` - Runs only if the Workflow was successful.
+  - `always()` - Always runs, regardless of Workflow status (recommended).
+  - `cancelled()` - Runs only if the Workflow was canceled.
+  - `failure()` - Runs only if the Workflow failed.
+  - `success()` - Runs only if the Workflow was successful.
 - **`with`** - List of input parameters required for execution. See [Execution Arguments](#execution-arguments) for
   details.
 
@@ -214,6 +220,90 @@ jobs:
           notify_fields: "actor,repository,workflow"
 ```
 
+## GitLab CI/CD Usage
+
+The action works in GitLab CI/CD via a Docker image — no `uses:` syntax, just `image:` + `variables:`.
+
+**Important:** Keep your `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in GitLab CI/CD Variables (Settings → CI/CD → Variables) with the **Masked** flag.
+
+### GitLab Push Event
+
+```yaml
+notify-push:
+  image: ghcr.io/prodreams/actions-telegram-notifier:latest
+  variables:
+    INPUT_TOKEN: $TELEGRAM_BOT_TOKEN
+    INPUT_CHAT_ID: $TELEGRAM_CHAT_ID
+    INPUT_STATUS: success
+    INPUT_NOTIFY_FIELDS: "actor,repository,workflow,branch,commit"
+  script:
+    - /actions-telegram-notifier
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: always
+```
+
+### GitLab Merge Request Event
+
+```yaml
+notify-mr:
+  image: ghcr.io/prodreams/actions-telegram-notifier:latest
+  variables:
+    INPUT_TOKEN: $TELEGRAM_BOT_TOKEN
+    INPUT_CHAT_ID: $TELEGRAM_CHAT_ID
+    INPUT_STATUS: pending
+    INPUT_NOTIFY_FIELDS: "actor,repository,workflow"
+  script:
+    - /actions-telegram-notifier
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+```
+
+### GitLab Tag Push
+
+```yaml
+notify-tag:
+  image: ghcr.io/prodreams/actions-telegram-notifier:latest
+  variables:
+    INPUT_TOKEN: $TELEGRAM_BOT_TOKEN
+    INPUT_CHAT_ID: $TELEGRAM_CHAT_ID
+    INPUT_STATUS: info
+    INPUT_TITLE: "New tag released"
+    INPUT_NOTIFY_FIELDS: "actor,repository"
+  script:
+    - /actions-telegram-notifier
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: always
+```
+
+### Manual / Web / Schedule Trigger
+
+```yaml
+notify-manual:
+  image: ghcr.io/prodreams/actions-telegram-notifier:latest
+  variables:
+    INPUT_TOKEN: $TELEGRAM_BOT_TOKEN
+    INPUT_CHAT_ID: $TELEGRAM_CHAT_ID
+    INPUT_STATUS: info
+    INPUT_NOTIFY_FIELDS: "actor,repository,workflow,branch"
+    INPUT_MESSAGE: "Pipeline triggered from $CI_PIPELINE_SOURCE"
+  script:
+    - /actions-telegram-notifier
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "api"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+      when: always
+```
+
+For a complete example, see [`gitlab-ci.example.yml`](./gitlab-ci.example.yml).
+
 ## Notification Examples
 
 ### Notification for Successful Workflow Completion in a Push Event
@@ -226,7 +316,7 @@ jobs:
 
 ### Notification for Closing a Pull Request
 
-![PR Closed](./img/pr_closed.png)
+![PR Opened](./img/pr_closed.png)
 
 ### Notification for Merging a Pull Request
 
@@ -243,7 +333,7 @@ jobs:
 This Action was created as part of the "Code on a Napkin" project:
 
 * Website: https://pressanybutton.ru/
-* Telegram channel: https://t.me/press_any_button
+* Telegram channel: https://t.me/napkincode
 
 ## Support
 

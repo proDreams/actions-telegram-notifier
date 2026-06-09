@@ -1,0 +1,105 @@
+# Пример использования actions-telegram-notifier в GitLab CI
+#
+# Требования:
+#   1. Создать Telegram-бота через @BotFather, получить токен
+#   2. Добавить переменные TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID в Settings → CI/CD → Variables
+#
+# Поддерживаемые события:
+#   - push (включая теги)
+#   - merge_request
+#   - ручной/web запуск (manual)
+#   - schedule
+#   - api/trigger
+#
+# Переменные, которые можно передать:
+#   INPUT_TOKEN       — Telegram Bot Token (обязательно)
+#   INPUT_CHAT_ID     — Telegram Chat ID (обязательно)
+#   INPUT_STATUS      — success / failure / cancelled / pending / info (по умолч. info)
+#   INPUT_TITLE       — кастомный заголовок (опционально)
+#   INPUT_MESSAGE     — кастомный текст (опционально)
+#   INPUT_FOOTER      — текст в конце (опционально)
+#   INPUT_NOTIFY_FIELDS — через запятую (опционально): actor,repository,workflow,branch,commit,repo_with_tag
+#   INPUT_API_URL     — кастомный Bot API URL (опционально)
+#   INPUT_PROXY_URL   — прокси (опционально)
+#
+# ⚠️ ВАЖНО: В GitLab все переменные с префиксом INPUT_* НЕ маскируются автоматически.
+# Если используешь TELEGRAM_BOT_TOKEN как INPUT_TOKEN — токен будет виден в логах.
+# Рекомендуется передавать параметры через GitLab CI/CD Variables с типом "Masked".
+
+stages:
+  - build
+  - notify
+
+build:
+  stage: build
+  script:
+    - echo "Building the project..."
+    - echo "Build complete"
+
+# --- Push event ---
+notify-push:
+  stage: notify
+  image: ghcr.io/prodreams/actions-telegram-notifier:latest
+  variables:
+    INPUT_TOKEN: $TELEGRAM_BOT_TOKEN
+    INPUT_CHAT_ID: $TELEGRAM_CHAT_ID
+    INPUT_STATUS: success
+    INPUT_NOTIFY_FIELDS: "actor,repository,workflow,branch,commit"
+  script:
+    - /actions-telegram-notifier
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: always
+
+# --- Merge Request event ---
+notify-mr:
+  stage: notify
+  image: ghcr.io/prodreams/actions-telegram-notifier:latest
+  variables:
+    INPUT_TOKEN: $TELEGRAM_BOT_TOKEN
+    INPUT_CHAT_ID: $TELEGRAM_CHAT_ID
+    INPUT_STATUS: pending
+    INPUT_NOTIFY_FIELDS: "actor,repository,workflow"
+  script:
+    - /actions-telegram-notifier
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+
+# --- Tag push ---
+notify-tag:
+  stage: notify
+  image: ghcr.io/prodreams/actions-telegram-notifier:latest
+  variables:
+    INPUT_TOKEN: $TELEGRAM_BOT_TOKEN
+    INPUT_CHAT_ID: $TELEGRAM_CHAT_ID
+    INPUT_STATUS: info
+    INPUT_NOTIFY_FIELDS: "actor,repository"
+    INPUT_TITLE: "New tag released"
+  script:
+    - /actions-telegram-notifier
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: always
+
+# --- Manual/web/schedule trigger ---
+notify-manual:
+  stage: notify
+  image: ghcr.io/prodreams/actions-telegram-notifier:latest
+  variables:
+    INPUT_TOKEN: $TELEGRAM_BOT_TOKEN
+    INPUT_CHAT_ID: $TELEGRAM_CHAT_ID
+    INPUT_STATUS: info
+    INPUT_NOTIFY_FIELDS: "actor,repository,workflow,branch"
+    INPUT_MESSAGE: "Pipeline triggered from $CI_PIPELINE_SOURCE"
+  script:
+    - /actions-telegram-notifier
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "api"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+      when: always

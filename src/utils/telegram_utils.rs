@@ -1,39 +1,19 @@
-use crate::enums::event_enums::GitHubEvent;
 use crate::structures::data_structure::DataStructure;
 use serde_json::json;
 
-fn generate_keyboard(github_event: &GitHubEvent) -> serde_json::Value {
-    match &github_event {
-        GitHubEvent::Push(event) => {
-            json!({
-                "text": "↗️ Link to commit",
-                "url": event.get_compare()
-            })
-        }
-        GitHubEvent::PullRequest(event) => {
-            json!({
-                "text": "↗️ Link to Pull Request",
-                "url": event.pull_request.html_url
-            })
-        }
-        GitHubEvent::WorkflowDispatch(event) => {
-            json!({
-                "text": "↗️ Link to Workflow",
-                "url": format!("{}/blob/{}/{}", event.repository.html_url, event.reference.replace("refs/heads/", ""), event.workflow)
-            })
-        }
-        GitHubEvent::PullRequestReview(event) => {
-            let url = if event.review.html_url.is_empty() {
-                &event.pull_request.html_url
-            } else {
-                &event.review.html_url
-            };
+fn generate_keyboard(data: &DataStructure) -> serde_json::Value {
+    let details = &data.event_details;
 
-            json!({
-                "text": "↗️ Link to Review",
-                "url": url
-            })
-        }
+    if let (Some(url), Some(text)) = (&details.keyboard_url, &details.keyboard_text) {
+        json!({
+            "text": text,
+            "url": url
+        })
+    } else {
+        json!({
+            "text": "↗️ Open Repository",
+            "url": details.repo_url
+        })
     }
 }
 
@@ -47,7 +27,7 @@ fn generate_json(message_text: &String, data: &DataStructure) -> serde_json::val
         "reply_markup": {
             "inline_keyboard": [
                 [
-                    generate_keyboard(&data.event)
+                    generate_keyboard(&data)
                 ]
             ]
         }
