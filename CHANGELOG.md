@@ -1,3 +1,20 @@
+## v. 3.0.0
+
+- **GitLab CI Support**:
+    - Added full GitLab CI/CD compatibility. The action now auto-detects the provider (`GITLAB_CI` env var) and switches
+      between GitHub and GitLab event parsing.
+    - Supported GitLab events: `push`, `tag push`, `merge_request`, `manual/web/schedule/trigger pipeline`.
+    - Parses GitLab-specific environment variables (`CI_PIPELINE_SOURCE`, `CI_COMMIT_*`, `CI_MERGE_REQUEST_*`, etc.) and
+      maps them to the same notification format as GitHub events.
+    - See [`gitlab-ci.example.yml`](./gitlab-ci.example.yml) for usage examples.
+- **Architecture Rewrite**:
+    - Introduced `EventDetails` — a provider-agnostic intermediate representation that decouples event parsing from
+      message formatting.
+    - GitLab and GitHub share the same formatters and keyboard generation.
+- **Backward Compatibility**:
+    - All existing GitHub Actions workflows continue to work without changes.
+    - Same `INPUT_*` variables, same `action.yml`, same Docker image.
+
 ## v. 2.4.0
 
 - Pull Request Review Event Support:

@@ -10,24 +10,4 @@ impl PullRequestAction {
             PullRequestAction::Closed => "closed",
         }
     }
-
-    pub fn icon(&self) -> &str {
-        match self {
-            PullRequestAction::Opened => "🆕",
-            PullRequestAction::Edited => "✏️",
-            PullRequestAction::Synchronize => "🔄",
-            PullRequestAction::Reopened => "🔓",
-            PullRequestAction::Closed => "❌",
-        }
-    }
-
-    pub fn merged_icon(&self) -> &str {
-        "🔀"
-    }
-    
-    pub fn merged_text(&self) -> &str {
-        "merged"
-    }
-    
-    
 }
