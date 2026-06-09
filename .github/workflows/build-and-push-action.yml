@@ -19,7 +19,7 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-latest
+            runner: ubuntu-24.04
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
@@ -77,7 +77,7 @@ jobs:
 
   push:
     name: Merge Docker manifests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - build
     steps:
@@ -125,7 +125,7 @@ jobs:
           docker buildx imagetools inspect ${{ env.GHCR_IMAGE }}:${{ steps.meta.outputs.version }}        
 
   notify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: push
 
     steps:
