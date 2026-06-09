@@ -6,15 +6,34 @@ pub fn parse_gitlab_event() -> Option<EventDetails> {
 
     let repo_url = env::var("CI_PROJECT_URL").unwrap_or_default();
     let repo_path = env::var("CI_PROJECT_PATH").unwrap_or_default();
-    let author_name = env::var("CI_COMMIT_AUTHOR")
+
+    let author_name = env::var("GITLAB_USER_LOGIN")
+        .or_else(|_| env::var("CI_COMMIT_AUTHOR"))
         .unwrap_or_else(|_| "unknown".to_string());
+
     let commit_sha = env::var("CI_COMMIT_SHA").ok();
     let commit_message = env::var("CI_COMMIT_MESSAGE").ok()
         .map(|m| m.splitn(2, '\n').next().unwrap_or("").to_string());
     let workflow_name = env::var("CI_JOB_NAME").unwrap_or_default();
 
-    let author_url = if !repo_url.is_empty() && !author_name.is_empty() {
-        format!("{}/-/profile", repo_url.trim_end_matches('/'))
+    let author_url = if let Ok(login) = env::var("GITLAB_USER_LOGIN") {
+        if !login.is_empty() {
+            let host = env::var("CI_SERVER_HOST")
+                .or_else(|_| env::var("CI_SERVER_URL"))
+                .unwrap_or_default();
+            if !host.is_empty() {
+                let scheme = if host.contains("://") { "" } else { "https://" };
+                format!("{}{}/{}", scheme, host.trim_end_matches('/'), login)
+            } else {
+                let base = repo_url
+                    .trim_end_matches('/')
+                    .trim_end_matches(repo_path.trim_end_matches('/'))
+                    .trim_end_matches('/');
+                format!("{}/{}", base, login)
+            }
+        } else {
+            String::new()
+        }
     } else {
         String::new()
     };
@@ -52,19 +71,9 @@ fn parse_gitlab_push(
     let tag = env::var("CI_COMMIT_TAG").ok();
     let event_type = if tag.is_some() { EventType::Tag } else { EventType::Push };
 
-    let compare_url = if let (Some(sha), Some(br)) = (commit_sha.as_ref(), branch.as_ref()) {
-        Some(format!(
-            "{}/-/compare/{}...{}?from=main&to={}",
-            repo_url.trim_end_matches('/'),
-            sha,
-            sha,
-            br
-        ))
-    } else {
-        commit_sha.as_ref().map(|sha| {
-            format!("{}/-/commit/{}", repo_url.trim_end_matches('/'), sha)
-        })
-    };
+    let compare_url = commit_sha.as_ref().map(|sha| {
+        format!("{}/-/commit/{}", repo_url.trim_end_matches('/'), sha)
+    });
 
     let mut details = EventDetails {
         event_type,
