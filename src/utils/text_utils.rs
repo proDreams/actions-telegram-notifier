@@ -1,14 +1,20 @@
-use crate::enums::workflow_enums::{NotifyFields};
+use crate::enums::workflow_enums::NotifyFields;
 
+/// Escape text for safe insertion into HTML (Telegram parse_mode=HTML).
+pub fn html_escape(s: &str) -> String {
+    s.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+}
 
 pub fn generate_input_message(message: &str) -> String {
     if !message.is_empty() {
-        format!("\n\n{}", message)
+        format!("\n\n{}", html_escape(message))
     } else {
         "".to_string()
     }
 }
-
 pub fn generate_general_fields(
     notify_fields: &Option<Vec<NotifyFields>>,
     sender_html_url: &String,
@@ -24,17 +30,17 @@ pub fn generate_general_fields(
             NotifyFields::Actor => {
                 message.push_str(&format!(
                     "\n🧑‍💻 <b>Actor:</b> <a href='{}'>{}</a>",
-                    sender_html_url, login
+                    sender_html_url, html_escape(login)
                 ));
             }
             NotifyFields::Repository => {
                 message.push_str(&format!(
                     "\n📦 <b>Repository:</b> <a href='{}'>{}</a>",
-                    repository_html_url, full_name
+                    repository_html_url, html_escape(full_name)
                 ));
             }
             NotifyFields::Workflow => {
-                message.push_str(&format!("\n🏹 <b>Workflow:</b> <code>{}</code>", workflow));
+                message.push_str(&format!("\n🏹 <b>Workflow:</b> <code>{}</code>", html_escape(workflow)));
             }
             _ => {}
         }

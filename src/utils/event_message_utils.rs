@@ -1,7 +1,7 @@
 use crate::enums::workflow_enums::EventStatus;
 use crate::structures::data_structure::DataStructure;
 use crate::structures::event_details::{EventDetails, EventType};
-use crate::utils::text_utils::{generate_general_fields, generate_input_message};
+use crate::utils::text_utils::{generate_general_fields, generate_input_message, html_escape};
 
 pub fn generate_current_message(data: &DataStructure) -> String {
     let details = &data.event_details;
@@ -57,7 +57,7 @@ fn generate_pull_request_message(data: &DataStructure, details: &EventDetails) -
     if let (Some(url), Some(title)) = (&details.pr_url, &details.pr_title) {
         message += &format!(
             "📝 <b>PR Title:</b> <a href='{}'>{}</a>\n",
-            url, title
+            url, html_escape(title)
         );
     }
 
@@ -89,7 +89,7 @@ fn generate_pull_request_review_message(data: &DataStructure, details: &EventDet
     if let (Some(url), Some(title)) = (&details.pr_url, &details.pr_title) {
         message += &format!(
             "📝 <b>PR Title:</b> <a href='{}'>{}</a>\n",
-            url, title
+            url, html_escape(title)
         );
     }
 
@@ -105,7 +105,7 @@ fn generate_pull_request_review_message(data: &DataStructure, details: &EventDet
         if !body.trim().is_empty() {
             message += &format!(
                 "📝 <b>Comment:</b>\n<blockquote>{}</blockquote>\n",
-                body
+                html_escape(body)
             );
         }
     }
@@ -154,6 +154,8 @@ fn generate_workflow_dispatch_message(data: &DataStructure, details: &EventDetai
     message
 }
 
+// --- Helper functions (moved/adapted from old text utils) ---
+
 fn get_push_input_title(title: &str, status: &EventStatus) -> String {
     if title.is_empty() {
         format!(
@@ -174,21 +176,21 @@ fn generate_push_notify_fields(data: &DataStructure, details: &EventDetails) -> 
         match field {
             NotifyFields::Branch => {
                 if let Some(ref branch) = details.branch {
-                    message.push_str(&format!("\n🏷️ <b>Branch:</b> <code>{}</code>", branch));
+                    message.push_str(&format!("\n🏷️ <b>Branch:</b> <code>{}</code>", html_escape(branch)));
                 }
             }
             NotifyFields::RepoWithTag => {
                 let branch = details.branch.as_deref().unwrap_or("unknown");
                 message.push_str(&format!(
                     "\n🛠️ <code>@{}:{}</code>",
-                    details.repo_name, branch
+                    html_escape(&details.repo_name), html_escape(branch)
                 ));
             }
             NotifyFields::Commit => {
                 if let Some(ref msg) = details.commit_message {
                     message.push_str(&format!(
                         "\n🔨 <b>Commit Message:</b> <code>{}</code>",
-                        msg.splitn(2, '\n').next().unwrap_or("")
+                        html_escape(msg.splitn(2, '\n').next().unwrap_or(""))
                     ));
                 }
             }
@@ -261,14 +263,14 @@ fn generate_workflow_dispatch_notify_fields(
         match field {
             NotifyFields::Branch => {
                 if let Some(ref branch) = details.branch {
-                    message.push_str(&format!("\n🏷️ <b>Branch:</b> <code>{}</code>", branch));
+                    message.push_str(&format!("\n🏷️ <b>Branch:</b> <code>{}</code>", html_escape(branch)));
                 }
             }
             NotifyFields::RepoWithTag => {
                 let branch = details.branch.as_deref().unwrap_or("unknown");
                 message.push_str(&format!(
                     "\n🛠️ <code>@{}:{}</code>",
-                    details.repo_name, branch
+                    html_escape(&details.repo_name), html_escape(branch)
                 ));
             }
             NotifyFields::Commit => {
